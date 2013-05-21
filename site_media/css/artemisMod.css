@@ -53,5 +53,30 @@
 	.tab a.open:hover {
     	background: url("images/bt_openGreen.png") no-repeat scroll left -19px transparent;
 	}
+	
+	/*Left Pannel */
+	
+#parameters_form{margin:10px 0; }	
+
+	.data-entry table {
+	    margin: auto;
+	    background: none repeat scroll 0% 0% #6a6a6a;
+	}
+	
+	.data-entry th {
+	    background-color:transparent;
+	    color: white;
+	}	
+	
+.data-entry thead td, .data-entry tfoot td{
+    background: none repeat scroll 0% 0% #444;
+    color: white;
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+    -khtml-border-radius: 9px;
+    border-radius: 9px;
+
+}
+
 
 
