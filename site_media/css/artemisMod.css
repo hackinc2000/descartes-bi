@@ -52,7 +52,7 @@
 
     /* Loging Pannel */
 
-    .tab ul.login li a, #panel h2 a{ color: #abc837;    }
+    .tab ul.login li a, #panel h2 a{ color: #abc837;}
 
     #panel .content input.bt_register {
         background-image: url("images/bt_registerGreen.png")
@@ -61,5 +61,11 @@
     .tab a.open:hover {
         background: url("images/bt_openGreen.png") no-repeat scroll left -19px transparent;
     }
+    
+    /* Left Pannel (Tool Bar) */
+   
+   .ui-widget{margin:5px 0}
+   .ui-widget-header{padding:5px}
+
 
 
