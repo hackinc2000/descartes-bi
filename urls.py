@@ -19,35 +19,36 @@ from django.conf.urls.defaults import *
 from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import ugettext as _
+from django.views.generic.base import RedirectView
 
-admin.autodiscover() 
+admin.autodiscover()
 
 handler500 = 'common.views.error500'
 urlpatterns = patterns('',
-    (r'^admin/', admin.site.urls),
+    (r'^admin/', include(admin.site.urls)),
 
     (r'^reports/', include('reports.urls', namespace='reports')),
     (r'^grappelli/', include('grappelli.urls')),
     (r'^', include('common.urls')),
-    
+
     url(r'^login/$', 'django.contrib.auth.views.login', {'template_name':'login.html'}, name='my_login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page':"/"}, name='user_logout' ),
     url(r'^myaccount/password_change/$', 'django.contrib.auth.views.password_change', {'template_name': 'password_change_form.html'}, name='my_password_change'),
     url(r'^accounts/password_change_ok/$', 'django.contrib.auth.views.password_change_done', {'template_name': 'password_change_done.html'}),
-    
-    (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '%simages/favicon.ico' % settings.MEDIA_URL}),
+
+    (r'^favicon\.ico$', RedirectView.as_view(url='%simages/favicon.ico' % settings.MEDIA_URL)),
 )
 
 #for capp in getattr(settings, 'CUSTOMIZATION_APPS', []):
-#    exec "urlpatterns += patterns('', (r'^customization/%s/', include('%s.urls', namespace='%s')), )"  % (capp, capp, capp) 
+#    exec "urlpatterns += patterns('', (r'^customization/%s/', include('%s.urls', namespace='%s')), )"  % (capp, capp, capp)
 
 if 'ldap_groups' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('', (r'^ldap/', include('ldap_groups.urls')),)	
+    urlpatterns += patterns('', (r'^ldap/', include('ldap_groups.urls')),)
 
-if 'replicate' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('', (r'^replicate/', include('replicate.urls')),)
-        
 if settings.DEVELOPMENT:
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    urlpatterns += staticfiles_urlpatterns()
+
     urlpatterns += patterns('',
         (r'^%s-site_media/(?P<path>.*)$' % settings.PROJECT_NAME,
             'django.views.static.serve',
@@ -57,4 +58,4 @@ if settings.DEVELOPMENT:
     if 'rosetta' in settings.INSTALLED_APPS:
         urlpatterns += patterns('',
             url(r'^rosetta/', include('rosetta.urls'), name='rosetta'),
-	)
+    )

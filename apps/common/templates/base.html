@@ -163,9 +163,9 @@
                 });
 
                 {% if user.is_anonymous %}
-                    load_and_bind("#login_form_wrapper", ".login_panel_form", "{% url my_login %}?next={% url my_login %}");
+                    load_and_bind("#login_form_wrapper", ".login_panel_form", "{% url 'my_login' %}?next={% url 'my_login' %}");
                 {% else %}
-                    load_and_bind("#login_form_wrapper", ".login_panel_form", "{% url my_password_change %}");
+                    load_and_bind("#login_form_wrapper", ".login_panel_form", "{% url 'my_password_change' %}");
                 {% endif %}
             });
         </script>
@@ -184,7 +184,7 @@
                 {% if not user.is_anonymous %}
                     <div class="left right">
                         <h1>{% trans "Logout from aplication?" %}</h1>
-                        <form action="{% url user_logout %}" method="post">
+                        <form action="{% url 'user_logout' %}" method="post">
                             something here
                             <input type="submit" name="submit" value="{% trans 'Logout' %}" class="bt_register" />
                         </form>
@@ -218,10 +218,10 @@
                         <h1>{% trans "Language" %}</h1>
                         <h2>
                     {% ifequal LANGUAGE_CODE "es" %}
-                        <a href="{% url set_language %}?language=en"><img src="{{ MEDIA_URL }}images/flag-us.png" alt="US-flag" /> {% trans "English" %}</a>
+                        <a href="{% url 'set_language' %}?language=en"><img src="{{ MEDIA_URL }}images/flag-us.png" alt="US-flag" /> {% trans "English" %}</a>
                         &nbsp;/&nbsp;<img src="{{ MEDIA_URL }}images/flag-pr.png" alt="PR-flag" /> {% trans "Spanish" %}
                     {% else %}
-                        <a href="{% url set_language %}?language=es"><img src="{{ MEDIA_URL }}images/flag-pr.png" alt="PR-flag" /> {% trans "Spanish" %}</a>
+                        <a href="{% url 'set_language' %}?language=es"><img src="{{ MEDIA_URL }}images/flag-pr.png" alt="PR-flag" /> {% trans "Spanish" %}</a>
                         &nbsp;/&nbsp;<img src="{{ MEDIA_URL }}images/flag-us.png" alt="US-flag" /> {% trans "English" %}
                     {% endifequal %}
                     </h2>
@@ -274,7 +274,7 @@
                 <li><a href="#">{% trans "Home" %}</a>
                     <ul>
                         <li><a href="/">{% trans "Main page" %}</a></li>
-                        <li><a href="{% url about_view %}">{% trans "About" %}</a></li>
+                        <li><a href="{% url 'about_view' %}">{% trans "About" %}</a></li>
                     </ul>
                 </li>
 
@@ -295,8 +295,6 @@
                     <li><a href="#">{% trans "Configuration" %}</a>
                         <ul>
                             <li><a href="/admin/">{% trans "Administration" %}</a></li>
-                            <li><a href="{% url backup_view %}">{% trans "Create backup copy" %}</a></li>
-                            <li><a href="{% url restore_view %}">{% trans "Restore backup copy" %}</a></li>
                         </ul>
                     </li>
                 {% endif %}

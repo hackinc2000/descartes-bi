@@ -23,15 +23,12 @@ from django import http
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.files import File
-from django.core.management.commands import reset
 from django.core.servers.basehttp import FileWrapper
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import loader, RequestContext
 
 from forms import UploadFileForm
-import runscript
-import dumpscript
 
 
 def error500(request, template_name='500.html'):
@@ -87,81 +84,3 @@ def get_project_root():
     """ get the project root directory """
     settings_mod = __import__(settings.SETTINGS_MODULE, {}, {}, [''])
     return os.path.dirname(os.path.abspath(settings_mod.__file__))
-
-
-@login_required
-def dbbackup(request):
-#   from django_extensions.management.commands import dumpscript
-    ct = datetime.datetime.now()
-
-    if not (request.user.is_authenticated() and request.user.is_staff):
-        raise http.Http404
-
-    models = dumpscript.get_models(['reports', 'replicate', 'auth'])
-
-    context = {}
-
-    filename = "%s-backup-%s.py" % (settings.PROJECT_TITLE, ct.strftime("%Y-%m-%d"))
-    filepath = "/tmp/%s" % filename
-    f = open(filepath, 'w')
-    f.write(unicode(dumpscript.Script(models=models, context=context)))
-    f.close()
-
-    f = open(filepath, 'r')
-    response = HttpResponse(FileWrapper(File(f)))
-    response['Content-Disposition'] = 'attachment; filename=%s' % filename
-    response['Content-Length'] = os.path.getsize(filepath)
-    return response
-
-
-@login_required
-def dbrestore(request):
-    error_message = ''
-    error_title = ''
-    if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                _handle_restore_file(request.FILES['file'])
-                return HttpResponseRedirect('/')
-            except:
-                import sys
-                (exc_type, exc_info, tb) = sys.exc_info()
-                error_title = exc_type
-                error_message = exc_info
-
-    else:
-        form = UploadFileForm()
-    return render_to_response('dbrestore.html', {
-        'form': form,
-        'error_title': error_title,
-        'error_message': error_message
-    }, context_instance=RequestContext(request))
-
-
-def _handle_restore_file(uploaded_file):
-    #Turn into a real file
-    dest_path = "%s/scripts/%s" % (get_project_root(), uploaded_file)
-    destination = open(dest_path, 'wb+')
-    for chunk in uploaded_file.chunks():
-        destination.write(unicode(chunk))
-    destination.close()
-
-    #Erase all data from application
-    r = reset.Command()
-    try:
-        r.handle('reports')
-        r.handle('replicate')
-        r.handle('auth')
-    except:
-        raise
-
-    r = runscript.Command()
-    try:
-        #Remove trailing ".py"
-        r.handle(os.path.basename(dest_path)[:-3])
-        #TODO: Remove file
-    except:
-        raise
-
-    return

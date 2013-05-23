@@ -1,29 +1,21 @@
 # Django project settings.
 # FLAGS
 import os
-import sys 
+import sys
 
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "./"))
-sys.path.append(os.path.join(PROJECT_ROOT, 'modules'))
-sys.path.append(os.path.join(PROJECT_ROOT, 'apps'))
-sys.path.append(os.path.join(PROJECT_ROOT, 'customization_apps'))
-sys.path.append(os.path.join(PROJECT_ROOT, 'shared_apps'))
-sys.path.append(os.path.join(PROJECT_ROOT, '3rd_party_apps'))
-
+SITE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "./"))
+sys.path.append(os.path.join(SITE_ROOT, 'modules'))
+sys.path.append(os.path.join(SITE_ROOT, 'apps'))
+sys.path.append(os.path.join(SITE_ROOT, 'customization_apps'))
+sys.path.append(os.path.join(SITE_ROOT, 'shared_apps'))
+sys.path.append(os.path.join(SITE_ROOT, '3rd_party_apps'))
 
 PROJECT_NAME = 'descartes'
 PROJECT_TITLE = 'Descartes'
 
-#DEBUG = False
-#TEMPLATE_DEBUG = DEBUG
-#DEBUG_APPS_DJANGO_EXTENSIONS = False
-#DEVELOPMENT = False
-#SERVE_STATIC_CONTENT = True
-
 DEBUG = False
 DEVELOPMENT = False
 TEMPLATE_DEBUG = True
-
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -34,7 +26,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(PROJECT_ROOT, '%s.sqlite' % PROJECT_NAME),     # Or path to database file if using sqlite3.
+        'NAME': os.path.join(SITE_ROOT, '%s.sqlite' % PROJECT_NAME),     # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -72,19 +64,38 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'site_media')
+# Absolute filesystem path to the directory that will hold user-uploaded files.
+# Example: "/home/media/media.lawrence.com/media/"
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'site_media/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
+# trailing slash.
+# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
+MEDIA_URL = ''
 MEDIA_URL = '/%s-site_media/' % PROJECT_NAME
 
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = MEDIA_URL + 'grappelli/'
+# Absolute path to the directory static files should be collected to.
+# Don't put anything in this directory yourself; store your static files
+# in apps' "static/" subdirectories and in STATICFILES_DIRS.
+# Example: "/home/media/media.lawrence.com/static/"
+STATIC_ROOT = os.path.join(SITE_ROOT, 'static/')
+
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_URL = '/%s-static/' % PROJECT_NAME
+
+# Additional locations of static files
+STATICFILES_DIRS = (
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+)
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '@mff4*!u6*nc5+0pmkvcu#$&n1mq=n=+mb6g%2!ivyj3_m_g-1'
@@ -110,8 +121,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_ROOT, 'branding'),
-    os.path.join(PROJECT_ROOT, 'templates'),
+    os.path.join(SITE_ROOT, 'branding'),
+    os.path.join(SITE_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -125,17 +136,17 @@ INSTALLED_APPS = (
     'common',
 )
 
-       
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.auth',
+    'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.i18n',
+    'django.core.context_processors.static',
     'django.core.context_processors.media',
     'django.core.context_processors.request',
-#    'grappelli.context_processors.admin_template_path',
+    'django.contrib.messages.context_processors.messages',
 )
+
 #===== Configuration options ===============
 #--------- Grappelli ----------------
-#GRAPPELLI_ADMIN_TITLE = PROJECT_TITLE
 GRAPPELLI_ADMIN_TITLE = PROJECT_TITLE
 #--------- Django -------------------
 LOGIN_URL = '/login/'
@@ -146,7 +157,7 @@ SOURCE_DATABASE_NAME = PROJECT_NAME + '.sqlite'        # Or path to database fil
 SOURCE_DATABASE_USER = ''                       # Not used with sqlite3.
 SOURCE_DATABASE_PASSWORD = ''                   # Not used with sqlite3.
 SOURCE_DATABASE_HOST = ''                       # Set to empty string for localhost. Not used with sqlite3.
-SOURCE_DATABASE_PORT = ''    
+SOURCE_DATABASE_PORT = ''
 
 try:
     from settings_local import *
